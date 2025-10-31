@@ -12,7 +12,7 @@ const Index = () => {
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="text-center space-y-8 animate-fade-in">
           <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-            Много хочешь —<br />много получишь
+            Логистика будущего<br />уже сегодня
           </h1>
           
           <Button
@@ -20,7 +20,7 @@ const Index = () => {
             size="lg"
             className="bg-white text-primary hover:bg-white/90 px-12 py-8 text-xl font-semibold transition-all hover:scale-110 shadow-2xl"
           >
-            Digital Manager
+            your digital manager
           </Button>
         </div>
       </div>

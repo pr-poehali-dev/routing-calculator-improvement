@@ -1,10 +1,12 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
+import { Button } from "@/components/ui/button";
 
 const Results = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const transportOptions = [
     {
@@ -13,7 +15,8 @@ const Results = () => {
       price: "45,000 ₽",
       route: "М5 → М7 → А108",
       duration: "3-5 дней",
-      color: "bg-blue-50 border-blue-200"
+      color: "bg-blue-50 border-blue-200",
+      clickable: true
     },
     {
       type: "Морская перевозка",
@@ -21,7 +24,8 @@ const Results = () => {
       price: "120,000 ₽",
       route: "Владивосток → Санкт-Петербург",
       duration: "25-30 дней",
-      color: "bg-cyan-50 border-cyan-200"
+      color: "bg-cyan-50 border-cyan-200",
+      clickable: true
     },
     {
       type: "Ж/Д перевозка",
@@ -29,26 +33,27 @@ const Results = () => {
       price: "65,000 ₽",
       route: "РЖД маршрут 1А",
       duration: "7-10 дней",
-      color: "bg-green-50 border-green-200"
-    },
-    {
-      type: "Авиатранспорт",
-      icon: "Plane",
-      price: "250,000 ₽",
-      route: "Прямой рейс",
-      duration: "1-2 дня",
-      color: "bg-purple-50 border-purple-200"
+      color: "bg-green-50 border-green-200",
+      clickable: true
     },
     {
       type: "Комбинированный",
       icon: "Boxes",
-      price: "85,000 ₽",
-      route: "Авто + ЖД + Авто",
-      duration: "5-7 дней",
-      variants: "3 варианта",
-      color: "bg-orange-50 border-orange-200"
+      price: "от 78,000 ₽",
+      route: "Несколько видов транспорта",
+      duration: "5-35 дней",
+      variants: "6 вариантов",
+      color: "bg-orange-50 border-orange-200",
+      clickable: true,
+      navigateTo: "/combined"
     }
   ];
+
+  const handleCardClick = (option: any) => {
+    if (option.navigateTo) {
+      navigate(option.navigateTo);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,11 +66,12 @@ const Results = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {transportOptions.map((option, index) => (
             <Card
               key={index}
-              className={`p-6 ${option.color} border-2 transition-all hover:shadow-lg hover:scale-105 animate-fade-in cursor-pointer`}
+              onClick={() => handleCardClick(option)}
+              className={`p-6 ${option.color} border-2 transition-all hover:shadow-lg hover:scale-105 animate-fade-in ${option.clickable ? 'cursor-pointer' : ''}`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex items-center gap-3 mb-4">

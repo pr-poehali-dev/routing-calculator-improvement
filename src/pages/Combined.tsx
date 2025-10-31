@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
@@ -29,6 +30,7 @@ interface RouteDetail {
 }
 
 const Combined = () => {
+  const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<SortType>('profitability');
   const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
 
@@ -506,6 +508,24 @@ const Combined = () => {
                       </div>
                     </Card>
                   ))}
+                </div>
+
+                <div className="flex justify-center pt-6">
+                  <Button 
+                    size="lg" 
+                    className="w-full"
+                    onClick={() => {
+                      navigate('/route-details', {
+                        state: {
+                          routeName: sortedVariants[selectedRoute].name,
+                          routeSteps: sortedVariants[selectedRoute].details
+                        }
+                      });
+                    }}
+                  >
+                    <Icon name="FileText" size={20} className="mr-2" />
+                    Посмотреть детальную смету
+                  </Button>
                 </div>
               </div>
             </>

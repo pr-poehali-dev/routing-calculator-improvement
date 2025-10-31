@@ -3,8 +3,35 @@ import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+type SortType = 'profitability' | 'duration' | 'price' | 'risk' | 'distance' | 'scalability' | 'complexity';
+
+interface RouteDetail {
+  step: number;
+  type: string;
+  from: string;
+  to: string;
+  via: string[];
+  description: string;
+}
 
 const Combined = () => {
+  const [sortBy, setSortBy] = useState<SortType>('profitability');
+  const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
+
   const combinedVariants = [
     {
       name: "Авто + ЖД",
@@ -12,8 +39,31 @@ const Combined = () => {
       price: 78000,
       priceFormatted: "78,000 ₽",
       duration: "6-8 дней",
+      durationDays: 7,
       color: "bg-blue-50 border-blue-200",
-      profitability: 95
+      profitability: 95,
+      risk: 15,
+      distance: 6200,
+      scalability: 85,
+      complexity: 20,
+      details: [
+        {
+          step: 1,
+          type: "Автомобильная доставка",
+          from: "Москва",
+          to: "Екатеринбург",
+          via: ["М7 Волга", "Казань", "Пермь"],
+          description: "Доставка по федеральной трассе М7, протяженность 1800 км"
+        },
+        {
+          step: 2,
+          type: "ЖД доставка",
+          from: "Екатеринбург",
+          to: "Владивосток",
+          via: ["Станция Екатеринбург-Пассажирский", "Новосибирск-Главный", "Иркутск-Пассажирский", "Хабаровск-1", "Станция Владивосток"],
+          description: "Транссибирская магистраль, 4400 км по железнодорожным путям"
+        }
+      ]
     },
     {
       name: "ЖД + Авто + ЖД",
@@ -21,8 +71,39 @@ const Combined = () => {
       price: 92000,
       priceFormatted: "92,000 ₽",
       duration: "9-12 дней",
+      durationDays: 10.5,
       color: "bg-purple-50 border-purple-200",
-      profitability: 88
+      profitability: 88,
+      risk: 25,
+      distance: 4800,
+      scalability: 78,
+      complexity: 35,
+      details: [
+        {
+          step: 1,
+          type: "ЖД доставка",
+          from: "Москва",
+          to: "Самара",
+          via: ["Казанский вокзал", "Рязань", "Сызрань", "Самара-Пассажирская"],
+          description: "1050 км по железной дороге через Приволжье"
+        },
+        {
+          step: 2,
+          type: "Автомобильная доставка",
+          from: "Самара",
+          to: "Астана",
+          via: ["Оренбург", "Граница РФ-Казахстан", "Костанай"],
+          description: "1800 км автотранспортом через Казахстан"
+        },
+        {
+          step: 3,
+          type: "ЖД доставка",
+          from: "Астана",
+          to: "Алматы",
+          via: ["Станция Нур-Султан", "Караганда", "Балхаш", "Алматы-1"],
+          description: "1950 км по казахстанским железным дорогам"
+        }
+      ]
     },
     {
       name: "Морская + Авто",
@@ -30,8 +111,31 @@ const Combined = () => {
       price: 135000,
       priceFormatted: "135,000 ₽",
       duration: "28-32 дня",
+      durationDays: 30,
       color: "bg-cyan-50 border-cyan-200",
-      profitability: 72
+      profitability: 72,
+      risk: 45,
+      distance: 18500,
+      scalability: 92,
+      complexity: 40,
+      details: [
+        {
+          step: 1,
+          type: "Морская доставка",
+          from: "Владивосток",
+          to: "Санкт-Петербург",
+          via: ["Порт Владивосток", "Японское море", "Суэцкий канал", "Средиземное море", "Северное море", "Порт Санкт-Петербург"],
+          description: "17800 км морским путем вокруг Евразии"
+        },
+        {
+          step: 2,
+          type: "Автомобильная доставка",
+          from: "Санкт-Петербург",
+          to: "Москва",
+          via: ["М11 Нева", "Тверь"],
+          description: "700 км по скоростной трассе М11"
+        }
+      ]
     },
     {
       name: "ЖД + Морская",
@@ -39,8 +143,31 @@ const Combined = () => {
       price: 145000,
       priceFormatted: "145,000 ₽",
       duration: "18-22 дня",
+      durationDays: 20,
       color: "bg-green-50 border-green-200",
-      profitability: 68
+      profitability: 68,
+      risk: 38,
+      distance: 2800,
+      scalability: 88,
+      complexity: 32,
+      details: [
+        {
+          step: 1,
+          type: "ЖД доставка",
+          from: "Москва",
+          to: "Новороссийск",
+          via: ["Павелецкий вокзал", "Воронеж", "Ростов-на-Дону", "Краснодар", "Станция Новороссийск"],
+          description: "1500 км по южному направлению"
+        },
+        {
+          step: 2,
+          type: "Морская доставка",
+          from: "Новороссийск",
+          to: "Стамбул",
+          via: ["Порт Новороссийск", "Черное море", "Босфор", "Порт Стамбул"],
+          description: "1300 км через Черное море в Турцию"
+        }
+      ]
     },
     {
       name: "Морская + ЖД + Авто",
@@ -48,8 +175,39 @@ const Combined = () => {
       price: 158000,
       priceFormatted: "158,000 ₽",
       duration: "30-35 дней",
+      durationDays: 32.5,
       color: "bg-pink-50 border-pink-200",
-      profitability: 60
+      profitability: 60,
+      risk: 50,
+      distance: 19500,
+      scalability: 90,
+      complexity: 55,
+      details: [
+        {
+          step: 1,
+          type: "Морская доставка",
+          from: "Владивосток",
+          to: "Санкт-Петербург",
+          via: ["Порт Владивосток", "Японское море", "Индийский океан", "Суэцкий канал", "Балтийское море", "Порт Санкт-Петербург"],
+          description: "17800 км морским путем"
+        },
+        {
+          step: 2,
+          type: "ЖД доставка",
+          from: "Санкт-Петербург",
+          to: "Минск",
+          via: ["Витебский вокзал", "Псков", "Полоцк", "Минск-Пассажирский"],
+          description: "850 км по белорусскому направлению"
+        },
+        {
+          step: 3,
+          type: "Автомобильная доставка",
+          from: "Минск",
+          to: "Варшава",
+          via: ["М1/Е30", "Брест", "Граница Беларусь-Польша", "Тересполь"],
+          description: "550 км до Польши"
+        }
+      ]
     },
     {
       name: "Авто + Морская + Авто",
@@ -57,12 +215,76 @@ const Combined = () => {
       price: 165000,
       priceFormatted: "165,000 ₽",
       duration: "12-15 дней",
+      durationDays: 13.5,
       color: "bg-orange-50 border-orange-200",
-      profitability: 55
+      profitability: 55,
+      risk: 42,
+      distance: 2900,
+      scalability: 75,
+      complexity: 48,
+      details: [
+        {
+          step: 1,
+          type: "Автомобильная доставка",
+          from: "Москва",
+          to: "Новороссийск",
+          via: ["М4 Дон", "Воронеж", "Ростов-на-Дону", "Краснодар"],
+          description: "1500 км по федеральной трассе М4"
+        },
+        {
+          step: 2,
+          type: "Морская доставка",
+          from: "Новороссийск",
+          to: "Констанца",
+          via: ["Порт Новороссийск", "Черное море", "Порт Констанца"],
+          description: "700 км через Черное море в Румынию"
+        },
+        {
+          step: 3,
+          type: "Автомобильная доставка",
+          from: "Констанца",
+          to: "Бухарест",
+          via: ["A2", "Черноводэ", "Фетешть"],
+          description: "225 км по румынской автомагистрали"
+        }
+      ]
     }
   ];
 
-  const sortedVariants = [...combinedVariants].sort((a, b) => b.profitability - a.profitability);
+  const sortOptions = [
+    { value: 'profitability' as SortType, label: 'По выгодности', icon: 'TrendingUp' },
+    { value: 'duration' as SortType, label: 'По срокам', icon: 'Clock' },
+    { value: 'price' as SortType, label: 'По наименьшей стоимости', icon: 'DollarSign' },
+    { value: 'risk' as SortType, label: 'По рискам', icon: 'AlertTriangle' },
+    { value: 'distance' as SortType, label: 'По продолжительности пути', icon: 'Navigation' },
+    { value: 'scalability' as SortType, label: 'По масштабируемости', icon: 'Maximize2' },
+    { value: 'complexity' as SortType, label: 'По сложности и затратам усилий', icon: 'Layers' }
+  ];
+
+  const getSortedVariants = () => {
+    const sorted = [...combinedVariants];
+    switch (sortBy) {
+      case 'profitability':
+        return sorted.sort((a, b) => b.profitability - a.profitability);
+      case 'duration':
+        return sorted.sort((a, b) => a.durationDays - b.durationDays);
+      case 'price':
+        return sorted.sort((a, b) => a.price - b.price);
+      case 'risk':
+        return sorted.sort((a, b) => a.risk - b.risk);
+      case 'distance':
+        return sorted.sort((a, b) => a.distance - b.distance);
+      case 'scalability':
+        return sorted.sort((a, b) => b.scalability - a.scalability);
+      case 'complexity':
+        return sorted.sort((a, b) => a.complexity - b.complexity);
+      default:
+        return sorted;
+    }
+  };
+
+  const sortedVariants = getSortedVariants();
+  const currentSortOption = sortOptions.find(opt => opt.value === sortBy);
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,19 +302,36 @@ const Combined = () => {
           <h3 className="text-xl font-semibold text-white mb-4">Сортировка</h3>
           <Separator className="mb-6 bg-white/20" />
           
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-accent rounded-lg">
-              <Icon name="SlidersHorizontal" size={24} className="text-white" />
-            </div>
-            <span className="text-lg text-white font-medium">По выгодности</span>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" className="flex items-center gap-3 mb-6 bg-accent text-white hover:bg-accent/90">
+                <Icon name="SlidersHorizontal" size={24} />
+                <span className="text-lg font-medium">{currentSortOption?.label}</span>
+                <Icon name="ChevronDown" size={20} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[280px]">
+              {sortOptions.map((option) => (
+                <DropdownMenuItem
+                  key={option.value}
+                  onClick={() => setSortBy(option.value)}
+                  className="flex items-center gap-3 cursor-pointer py-3"
+                >
+                  <Icon name={option.icon} size={18} />
+                  <span>{option.label}</span>
+                  {sortBy === option.value && <Icon name="Check" size={18} className="ml-auto text-primary" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-12">
           {sortedVariants.map((variant, index) => (
             <Card
               key={index}
-              className={`p-6 ${variant.color} border-2 transition-all hover:shadow-lg hover:scale-105 animate-fade-in`}
+              onClick={() => setSelectedRoute(index)}
+              className={`p-6 ${variant.color} border-2 transition-all hover:shadow-lg hover:scale-105 animate-fade-in cursor-pointer`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="mb-4">
@@ -127,6 +366,14 @@ const Combined = () => {
                   </div>
                 </div>
               </div>
+
+              <Button variant="outline" className="w-full mt-4" onClick={(e) => {
+                e.stopPropagation();
+                setSelectedRoute(index);
+              }}>
+                <Icon name="Info" size={18} className="mr-2" />
+                Подробнее о маршруте
+              </Button>
             </Card>
           ))}
         </div>
@@ -194,6 +441,77 @@ const Combined = () => {
           </Card>
         </div>
       </div>
+
+      <Dialog open={selectedRoute !== null} onOpenChange={() => setSelectedRoute(null)}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          {selectedRoute !== null && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl flex items-center gap-3">
+                  <Icon name="Route" size={28} className="text-primary" />
+                  {sortedVariants[selectedRoute].name}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6 mt-4">
+                <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-4 rounded-lg">
+                  <p className="text-lg font-semibold text-gray-800 mb-2">Общий маршрут:</p>
+                  <p className="text-gray-700">{sortedVariants[selectedRoute].route}</p>
+                </div>
+
+                <div className="space-y-4">
+                  {sortedVariants[selectedRoute].details.map((detail, idx) => (
+                    <Card key={idx} className="p-5 border-2 border-primary/20">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg">
+                          {detail.step}
+                        </div>
+                        
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-lg text-gray-800 mb-2">{detail.type}</h4>
+                          
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <Icon name="MapPin" size={18} className="text-primary" />
+                              <span className="text-gray-600">Откуда:</span>
+                              <span className="font-medium text-gray-800">{detail.from}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <Icon name="Flag" size={18} className="text-accent" />
+                              <span className="text-gray-600">Куда:</span>
+                              <span className="font-medium text-gray-800">{detail.to}</span>
+                            </div>
+                            
+                            <div className="mt-3">
+                              <div className="flex items-start gap-2 mb-2">
+                                <Icon name="Navigation" size={18} className="text-gray-600 mt-0.5" />
+                                <span className="text-gray-600 font-medium">Промежуточные пункты:</span>
+                              </div>
+                              <div className="pl-7 space-y-1">
+                                {detail.via.map((point, pointIdx) => (
+                                  <div key={pointIdx} className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-primary/60" />
+                                    <span className="text-gray-700">{point}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <div className="mt-3 p-3 bg-blue-50 rounded">
+                              <p className="text-sm text-gray-700">{detail.description}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
